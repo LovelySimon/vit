@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 
 
 # 训练步骤
-def train_step(model: torch.nn.Module, dataloader: torch.utils.data.Dataloader, loss_fn: torch.nn.Module,
+def train_step(model: torch.nn.Module, dataloader, loss_fn: torch.nn.Module,
                optimizer: torch.optim.Optimizer, device: torch.device):
     """
     :param model:训练模型
@@ -35,7 +35,7 @@ def train_step(model: torch.nn.Module, dataloader: torch.utils.data.Dataloader, 
 
 
 # 验证步骤
-def val_step(model: torch.nn.Module, dataloader: torch.utils.data.Dataloader, loss_fn: torch.nn.Module,
+def val_step(model: torch.nn.Module, dataloader, loss_fn: torch.nn.Module,
              optimizer: torch.optim.Optimizer, device: torch.device):
     """
     验证模型
@@ -62,8 +62,8 @@ def val_step(model: torch.nn.Module, dataloader: torch.utils.data.Dataloader, lo
     return val_loss, val_accuracy
 
 
-def train(model: torch.nn.Module, train_loader: torch.utils.data.DataLoader(),
-          val_loader: torch.utils.data.DataLoader(), optimizer: torch.optim.Optimizer, loss_fn: torch.nn.Module,
+def train(model: torch.nn.Module, train_loader,
+          val_loader, optimizer: torch.optim.Optimizer, loss_fn: torch.nn.Module,
           epochs: int, device: torch.device):
     """
     整合
@@ -97,7 +97,7 @@ def train(model: torch.nn.Module, train_loader: torch.utils.data.DataLoader(),
     for epoch in tqdm(range(epochs)):
         train_loss, train_acc = train_step(model=model, dataloader=train_loader, loss_fn=loss_fn, optimizer=optimizer,
                                            device=device)
-        val_loss, val_acc = val_step(model=model, dataloader=train_loader, loss_fn=loss_fn, optimizer=optimizer,
+        val_loss, val_acc = val_step(model=model, dataloader=val_loader, loss_fn=loss_fn, optimizer=optimizer,
                                      device=device)
         print(f"Epoch {epoch + 1}/{epochs}|"
               f"Train Loss: {train_loss:.4f}|"
