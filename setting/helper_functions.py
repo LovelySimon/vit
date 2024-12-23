@@ -113,7 +113,7 @@ def plot_loss_curve(results):
     plt.title("Accuracy")
     plt.xlabel("Epochs")
     plt.legend()
-
+    plt.show()
 
 def pred_and_plot_image(
         model: torch.nn.Module,

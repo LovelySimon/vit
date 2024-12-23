@@ -18,8 +18,8 @@ def train_step(model: torch.nn.Module, dataloader, loss_fn: torch.nn.Module,
     model.train(True)
     train_loss = 0.0
     train_accuracy = 0.0
-    for batch, (X, y) in enumerate(dataloader):
-        X, y = X.to(device), y.to(device)
+    for batch in tqdm(dataloader, desc="Training", unit="batch"):
+        X, y = batch[0].to(device), batch[1].to(device)
         y_pred = model(X)
         loss = loss_fn(y_pred, y)
         train_loss += loss.item()
@@ -50,8 +50,8 @@ def val_step(model: torch.nn.Module, dataloader, loss_fn: torch.nn.Module,
     val_loss = 0.0
     val_accuracy = 0.0
     with torch.no_grad():
-        for batch, (X, y) in enumerate(dataloader):
-            X, y = X.to(device), y.to(device)
+        for batch in tqdm(dataloader, desc="Validation", unit="batch"):
+            X, y = batch[0].to(device), batch[1].to(device)
             test_pred_logists = model(X)
             loss = loss_fn(test_pred_logists, y)
             val_loss += loss.item()

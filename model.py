@@ -12,7 +12,7 @@ from setting import datasetup, engine
 from setting.helper_functions import set_seeds, plot_loss_curve
 
 # 训练参数设置
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 IMG_SIZE = 224
 PATCH_SIZE = 16
 IN_CHANNELS = 3
@@ -28,7 +28,7 @@ Tabacco_Transform = transforms.Compose([
     transforms.ToTensor(),
 ])
 train_loader, val_loader, class_names = datasetup.create_dataloaders(train_dir=train_dir, val_dir=val_dir,
-                                                                     transform=Tabacco_Transform, batch_size=BATCH_SIZE)
+                                                                     transform=Tabacco_Transform, batch_size=BATCH_SIZE,num_workers=4)
 
 # 将图像转化为vit需要的patch
 class PatchEmbedding(nn.Module):
@@ -152,6 +152,7 @@ class Vit(nn.Module):
         x = self.embedding_dropout(x)
         x = self.transformer_encoder(x)
         x = self.classifier(x[:,0])
+        return x
 
 vit = Vit(num_classes=len(class_names))
 # summary(model=vit,
@@ -227,10 +228,10 @@ from setting import engine
 
 # Setup the optimizer to optimize our ViT model parameters using hyperparameters from the ViT paper
 optimizer = torch.optim.Adam(params=vit.parameters(),
-                             lr=3e-3,  # Base LR from Table 3 for ViT-* ImageNet-1k
+                             lr=1e-3,  # Base LR from Table 3 for ViT-* ImageNet-1k
                              betas=(0.9, 0.999),
                              # default values but also mentioned in ViT paper section 4.1 (Training & Fine-tuning)
-                             weight_decay=0.3)  # from the ViT paper section 4.1 (Training & Fine-tuning) and Table 3 for ViT-* ImageNet-1k
+                             weight_decay=0.01)  # from the ViT paper section 4.1 (Training & Fine-tuning) and Table 3 for ViT-* ImageNet-1k
 
 # Setup the loss function for multi-class classification
 loss_fn = torch.nn.CrossEntropyLoss()
@@ -248,3 +249,4 @@ if __name__ == '__main__':
                            epochs=10,
                            device=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
     plot_loss_curve(results)
+
